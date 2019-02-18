@@ -8,7 +8,9 @@ import java.util.PriorityQueue;
  */
 public class LRUCache<K, V> {
 
-    private PriorityQueue<Node> queue;
+    private static int priority;
+
+    public PriorityQueue<Node> queue;
 
     public LRUCache(int capacity) {
         queue = new PriorityQueue<>(capacity, Comparator.comparingInt(Node::getPriority));
@@ -17,52 +19,50 @@ public class LRUCache<K, V> {
     public V calculate(K key) {
         for (Node node : queue) {
             if (node.getKey().equals(key)) {
-                node.incrementPriority();
+                node.setPriority(incrementPriority());
+                System.out.println("returned value = " + node.getValue());
+                System.out.println(queue);
                 return (V) node.getValue();
             }
         }
 
-        // calculate and put ot cache
+        // calculate new value for key and put to cache
+        Object value = "Calculated new value for key " + key;
+        Node<K, V> node = new Node<>(key);
+        node.setValue((V) value);
+        node.setPriority(incrementPriority());
+        queue.poll();
+        queue.add(node);
+        System.out.println(queue);
 
-        return null;
+        return node.getValue();
     }
 
-    class Node<K, V> {
 
-        private K key;
-
-        private V value;
-
-        private int priority;
-
-        public void incrementPriority() {
-            priority++;
-        }
-
-        public K getKey() {
-            return key;
-        }
-
-        public void setKey(K key) {
-            this.key = key;
-        }
-
-        public V getValue() {
-            return value;
-        }
-
-        public void setValue(V value) {
-            this.value = value;
-        }
-
-        public int getPriority() {
-            return priority;
-        }
+    public static int incrementPriority() {
+        return ++priority;
     }
 
     public static void main(String[] args) {
         LRUCache<String, String> cache = new LRUCache<>(10);
-        System.out.println();
-    }
 
+        Node<String, String> node = new Node<>("1");
+        node.setValue("one");
+        node.setPriority(incrementPriority());
+        cache.queue.add(node);
+
+        node = new Node("2");
+        node.setValue("two");
+        node.setPriority(incrementPriority());
+        cache.queue.add(node);
+
+        node = new Node("3");
+        node.setValue("three");
+        node.setPriority(incrementPriority());
+        cache.queue.add(node);
+
+        System.out.println(cache.queue);
+        cache.calculate("3");
+        cache.calculate("7");
+    }
 }
