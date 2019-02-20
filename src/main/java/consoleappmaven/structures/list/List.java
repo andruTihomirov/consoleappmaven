@@ -9,6 +9,8 @@ public interface List<T> {
 
     void prepend(T value);
 
-    public void delete(T value);
+    void delete(T value);
+
+    void reverse();
 
 }

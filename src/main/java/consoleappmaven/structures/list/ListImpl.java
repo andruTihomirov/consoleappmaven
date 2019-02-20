@@ -46,6 +46,21 @@ public class ListImpl<T> implements List<T> {
         }
     }
 
+    @Override
+    public void reverse() {
+        if (head == null) return;
+        Node prev = null;
+        Node current = head;
+        Node next;
+        while (current != null) {
+            next = current.getNext();
+            current.setNext(prev);
+            prev = current;
+            current = next;
+        }
+        head = prev;
+    }
+
     class Node {
 
         private T value;
